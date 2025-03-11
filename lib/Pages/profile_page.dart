@@ -19,10 +19,11 @@ class ProfilePage extends StatelessWidget {
               // Profile Info
               Row(
                 children: [
-                  // Profile Picture
-                  const CircleAvatar(
+                  // Profile Picture (Default Icon if no image)
+                  CircleAvatar(
                     radius: 40,
-                    backgroundImage: AssetImage("assets/profile.jpg"), // Change to network image if needed
+                    backgroundColor: Colors.grey[300], // Light grey background
+                    child: const Icon(Icons.person, size: 40, color: Colors.grey), // Default user icon
                   ),
                   const SizedBox(width: 16),
                   // Name & Email
