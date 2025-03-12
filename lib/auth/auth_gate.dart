@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:upskill_app/auth/register_page.dart';
+import '../Onboarding/onboarding_screen.dart';
 import '../app_users/admin/admin_home.dart';
 import '../app_users/alumni/alumni_home.dart';
 import '../app_users/students/home/students_home.dart';
@@ -57,7 +58,7 @@ class AuthGate extends StatelessWidget {
           );
         } else {
           // If no session, redirect to login page
-          return const LoginPage();
+          return  OnboardingScreen();
         }
       },
     );
