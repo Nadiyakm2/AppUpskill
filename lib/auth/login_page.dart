@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:upskill_app/auth/auth_service.dart';
 import 'package:upskill_app/auth/register_page.dart';
-import 'package:upskill_app/auth/roles.dart';
-
+import 'package:supabase_flutter/supabase_flutter.dart'; // Import Supabase
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -24,20 +23,64 @@ class _LoginPageState extends State<LoginPage> {
 
   // Login function
   void login() async {
-    final email= _emailController.text;
+    final email = _emailController.text;
     final password = _passwordController.text;
-    try{
+    try {
+      // Sign in the user
       await authService.signInWithEmailPassword(email, password);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Roles()),
-      );
-    }
-    catch(e) {
-      if(mounted){
+
+      // Get the current logged-in user's ID
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not logged in');
+      }
+
+      // Check if the user has a role in the 'user_roles' table
+      final response = await Supabase.instance.client
+          .from('user_roles') // 'user_roles' table
+          .select('role')
+          .eq('user_id', user.id)
+          .single() // Get the first result (user should have only one role)
+          .then((data) {
+        return data;
+      }).catchError((e) {
+        return null; // Return null in case of error
+      });
+
+      if (response == null) {
+        throw Exception('No role found for the user');
+      }
+
+      final role = response['role'];
+
+      // Redirect user based on their role
+      navigateToRolePage(role);
+
+    } catch (e) {
+      if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Error: $e")));
       }
+    }
+  }
+
+  // Navigate to different pages based on the role
+  void navigateToRolePage(String role) {
+    switch (role) {
+      case 'teacher':
+        Navigator.pushReplacementNamed(context, '/teacher_home');
+        break;
+      case 'admin':
+        Navigator.pushReplacementNamed(context, '/admin_home');
+        break;
+      case 'student':
+        Navigator.pushReplacementNamed(context, '/student_home');
+        break;
+      case 'alumni':
+        Navigator.pushReplacementNamed(context, '/alumni_home');
+        break;
+      default:
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Unknown role')));
     }
   }
 
@@ -63,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
             _isLoading
                 ? const CircularProgressIndicator()
-                :ElevatedButton(
+                : ElevatedButton(
               onPressed: login,
               child: const Text('Login'),
             ),
@@ -73,14 +116,13 @@ class _LoginPageState extends State<LoginPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => RegisterPage()),
-                ); // ✅ Corrected closing parenthesis
+                );
               },
               child: const Text(
                 "Don't have an account? Sign Up",
                 style: TextStyle(color: Color.fromARGB(255, 81, 94, 104)),
               ),
             ),
-
           ],
         ),
       ),

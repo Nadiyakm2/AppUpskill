@@ -6,6 +6,8 @@ import 'package:upskill_app/auth/login_page.dart';
 import 'package:upskill_app/app_users/students/home/students_home.dart';
 import 'package:upskill_app/app_users/admin/admin_home.dart';
 
+import 'auth/auth_gate.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -60,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       // Navigate based on the login and onboarding status
       if (!hasSeenOnboarding) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => OnboardingScreen()),
+          MaterialPageRoute(builder: (context) => AuthGate()),
         );
       } else if (isLoggedIn) {
         // Role-based navigation

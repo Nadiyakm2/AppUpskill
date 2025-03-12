@@ -17,32 +17,35 @@ class _RolesState extends State<Roles> {
     super.initState();
   }
 
-  // Function to store the role in Supabase without execute(), data, or error
+  // Function to store the role and email in Supabase
   Future<void> storeRoleInSupabase(String role) async {
-    final userId = Supabase.instance.client.auth.currentUser?.id; // Assuming the user is logged in
+    final user = Supabase.instance.client.auth.currentUser; // Get the current logged-in user
 
-    if (userId == null) {
+    if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User is not logged in')));
       return;
     }
 
+    final userEmail = user.email; // Get the user's email
+    final userId = user.id; // Get the user's ID
+
     try {
-      // Use the `upsert` without .execute()
+      // Use the `upsert` to store the role and email in the 'user_roles' table
       final response = await Supabase.instance.client
-          .from('roles') // Assuming a table called 'roles'
+          .from('user_roles') // Change 'roles' to 'user_roles'
           .upsert({
         'user_id': userId, // Store the user's ID
         'role': role, // Store the selected role
+        'email': userEmail, // Store the user's email
       })
-          .select();  // Adding select to get back a valid response
+          .select();  // Adding select to get a valid response
 
       // Check if the response is null
       if (response == null) {
         throw Exception('No response from Supabase');
       }
 
-      // Successfully saved the role and got a response
-      // After success, navigate based on the role
+      // Successfully saved the role and email, now navigate based on the role
       navigateToRolePage(role);
     } catch (e) {
       // Handle any error that may occur
@@ -101,7 +104,7 @@ class _RolesState extends State<Roles> {
               onPressed: selectedRole == null
                   ? null
                   : () async {
-                // Store the role in Supabase and navigate based on the role
+                // Store the role and email in Supabase and navigate based on the role
                 await storeRoleInSupabase(selectedRole!);
               },
               child: Text("Confirm Role"),
