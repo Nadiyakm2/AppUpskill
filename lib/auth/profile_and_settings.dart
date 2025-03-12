@@ -9,6 +9,16 @@ class ProfileAndSettingsScreen extends StatefulWidget {
 }
 
 class _ProfileAndSettingsScreenState extends State<ProfileAndSettingsScreen> {
+  final authService = AuthService();
+
+  // Log out function
+  void logout() async {
+    await authService.signOut();  // Sign the user out
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()), // Navigate to LoginPage
+    );
+  }
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   bool _isLoading = false;
@@ -91,14 +101,6 @@ class _ProfileAndSettingsScreenState extends State<ProfileAndSettingsScreen> {
     // Apply dark/light theme
   }
 
-  Future<void> _logOut() async {
-    await AuthService().logOut();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => LoginPage()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -162,7 +164,7 @@ class _ProfileAndSettingsScreenState extends State<ProfileAndSettingsScreen> {
                   // Log Out Button
                   Center(
                     child: ElevatedButton(
-                      onPressed: _logOut,
+                      onPressed: logout,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),

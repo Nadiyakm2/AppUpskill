@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:upskill_app/auth/auth_service.dart';
 import 'package:upskill_app/auth/login_page.dart';
 
-class BaseScaffold extends StatelessWidget {
+class BaseScaffold extends StatefulWidget {
   final String title;
   final Widget body;
   final List<Widget>? actions;
@@ -17,10 +17,25 @@ class BaseScaffold extends StatelessWidget {
   });
 
   @override
+  State<BaseScaffold> createState() => _BaseScaffoldState();
+}
+
+class _BaseScaffoldState extends State<BaseScaffold> {
+  final authService = AuthService();
+
+  // Log out function
+  void logout() async {
+    await authService.signOut();  // Sign the user out
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()), // Navigate to LoginPage
+    );
+  }
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false, // Ensure this is set to false
-      themeMode: themeMode,
+      themeMode: widget.themeMode,
       theme: ThemeData.light().copyWith(
         appBarTheme: AppBarTheme(backgroundColor: Colors.deepPurpleAccent),
         scaffoldBackgroundColor: Colors.white,
@@ -46,21 +61,18 @@ class BaseScaffold extends StatelessWidget {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text(title),
+          title: Text(widget.title),
           actions: [
             IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () async {
-                await AuthService().logOut();
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const LoginPage()),
-                );
-              },
-            ),
-            if (actions != null) ...actions!,
+              onPressed: logout,  // Log out when the icon is pressed
+              icon: const Icon(
+                Icons.logout,
+                color:  Color(0xffa88979),
+              ),
+            )
           ],
         ),
-        body: body,
+        body: widget.body,
       ),
     );
   }
