@@ -119,7 +119,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Text(
                           "Back",
                           style: TextStyle(
-                            color: Colors.blue.shade900,
+                             color:const Color.fromARGB(255, 113, 84, 163),
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),

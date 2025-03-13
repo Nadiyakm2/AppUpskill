@@ -16,12 +16,22 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+
+  // Focus nodes for managing field focus
+  final _emailFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
+  final _confirmPasswordFocusNode = FocusNode();
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    _confirmPasswordFocusNode.dispose();
     super.dispose();
   }
 
@@ -108,21 +118,47 @@ class _RegisterPageState extends State<RegisterPage> {
                     icon: Icons.email,
                     inputType: TextInputType.emailAddress,
                     validator: _validateEmail,
+                    focusNode: _emailFocusNode,
+                    nextFocusNode: _passwordFocusNode,
                   ),
                   const SizedBox(height: 15),
                   _buildTextField(
                     controller: _passwordController,
                     label: "Password",
                     icon: Icons.lock,
-                    isObscure: true,
+                    isObscure: !_isPasswordVisible,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
                     validator: _validatePassword,
+                    focusNode: _passwordFocusNode,
+                    nextFocusNode: _confirmPasswordFocusNode,
                   ),
                   const SizedBox(height: 15),
                   _buildTextField(
                     controller: _confirmPasswordController,
                     label: "Confirm Password",
                     icon: Icons.lock,
-                    isObscure: true,
+                    isObscure: !_isConfirmPasswordVisible,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                        });
+                      },
+                    ),
                     validator: _validateConfirmPassword,
                   ),
                   const SizedBox(height: 25),
@@ -169,12 +205,24 @@ class _RegisterPageState extends State<RegisterPage> {
     bool isObscure = false,
     TextInputType inputType = TextInputType.text,
     String? Function(String?)? validator,
+    Widget? suffixIcon,
+    FocusNode? focusNode,
+    FocusNode? nextFocusNode,
   }) {
     return TextFormField(
       controller: controller,
       obscureText: isObscure,
       keyboardType: inputType,
       validator: validator,
+      focusNode: focusNode,
+      textInputAction: nextFocusNode != null ? TextInputAction.next : TextInputAction.done,
+      onFieldSubmitted: (_) {
+        if (nextFocusNode != null) {
+          FocusScope.of(context).requestFocus(nextFocusNode);
+        } else {
+          register();
+        }
+      },
       decoration: InputDecoration(
         labelText: label,
         filled: true,
@@ -184,6 +232,7 @@ class _RegisterPageState extends State<RegisterPage> {
           borderSide: BorderSide.none,
         ),
         prefixIcon: Icon(icon),
+        suffixIcon: suffixIcon,
       ),
     );
   }

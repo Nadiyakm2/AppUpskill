@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:upskill_app/app_users/students/Categories/coding/mcq_system/mcq_model.dart';
-import 'package:upskill_app/app_users/students/Categories/coding/mcq_system/mcq_screen.dart';
-import 'package:upskill_app/app_users/students/Categories/coding/mcq_system/leaderboard_screen.dart';
-
 
 class CodingScreen extends StatelessWidget {
   @override
