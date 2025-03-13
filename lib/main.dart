@@ -54,32 +54,32 @@ class UpskillApp extends StatelessWidget {
 class AppRoutes {
   static const String root = '/';
   static const String auth = '/auth';
-  static const String studentHome = '/student_home';
-  static const String teacherHome = '/teacher_home';
-  static const String alumniHome = '/alumni_home';
-  static const String adminHome = '/admin_home';
+  static const String studentHome = '/StudentsHome';
+  static const String teacherHome = '/TeacherHome';
+  static const String alumniHome = '/AluminiHome';
+  static const String adminHome = '/AdminHome';
   static const String onboarding = '/onboarding';
 
   static Map<String, WidgetBuilder> get routes => {
-        root: (context) => FutureBuilder<Widget>(
-              future: _getStartupScreen(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SplashScreen();
-                } else if (snapshot.hasError) {
-                  return const LoginPage();
-                } else {
-                  return snapshot.data!;
-                }
-              },
-            ),
-        auth: (context) => const LoginPage(),
-        studentHome: (context) => StudentsHome(),
-        teacherHome: (context) => TeacherHome(),
-        alumniHome: (context) => AlumniHome(),
-        adminHome: (context) => AdminHome(),
-        onboarding: (context) => OnboardingScreen(),
-      };
+    root: (context) => FutureBuilder<Widget>(
+      future: _getStartupScreen(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SplashScreen();
+        } else if (snapshot.hasError) {
+          return const LoginPage();
+        } else {
+          return snapshot.data!;
+        }
+      },
+    ),
+    auth: (context) => const LoginPage(),
+    studentHome: (context) => StudentsHome(),
+    teacherHome: (context) => TeacherHome(),
+    alumniHome: (context) => AlumniHome(),
+    adminHome: (context) => AdminHome(),
+    onboarding: (context) => OnboardingScreen(),
+  };
 
   static Future<Widget> _getStartupScreen() async {
     await Future.delayed(Duration(seconds: 3));
@@ -98,26 +98,29 @@ class AppRoutes {
     print("➡️ User: ${user?.toJson()}");
 
     if (session != null && user != null) {
-      String role = await _fetchUserRole(user.id);
+      // Fetch user role and name based on email
+      String role = await _fetchUserRole(user.email ?? '');
       return hasSeenOnboarding ? _getHomeScreen(role) : OnboardingScreen();
     } else {
       return const LoginPage();
     }
   }
 
-  static Future<String> _fetchUserRole(String userId) async {
+  static Future<String> _fetchUserRole(String email) async {
     try {
+      // Query the 'user_names' table to get the role and name based on the email
       final response = await Supabase.instance.client
-          .from('profiles')
-          .select('role')
-          .eq('id', userId)
+          .from('user_names')
+          .select('role, name')
+          .eq('email', email)
           .single();
 
       print("🎭 User Role: ${response['role']}");
-      return response['role'] ?? 'student';
+      print("📝 User Name: ${response['name']}");
+      return response['role'] ?? 'student';  // Default to 'student' if no role is found
     } catch (error) {
       print("❌ Error fetching user role: $error");
-      return 'student';
+      return 'student';  // Default to 'student' if error occurs
     }
   }
 

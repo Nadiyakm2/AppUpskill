@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:upskill_app/app_users/students/Categories/coding.dart';
 import 'package:upskill_app/auth/basescaffold.dart';
 import 'package:upskill_app/app_users/students/Categories/analytics.dart';
@@ -8,7 +9,6 @@ import 'package:upskill_app/app_users/students/leaderboard.dart';
 import 'package:upskill_app/app_users/students/notification.dart';
 import 'package:upskill_app/auth/profile_and_settings.dart';
 
-
 class StudentsHome extends StatefulWidget {
   @override
   _StudentsHomeState createState() => _StudentsHomeState();
@@ -17,6 +17,38 @@ class StudentsHome extends StatefulWidget {
 class _StudentsHomeState extends State<StudentsHome> {
   ThemeMode _themeMode = ThemeMode.light;
   bool _isLoading = false;
+  String? _userName = 'Loading...'; // Default name while fetching
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserName();
+  }
+
+  // Function to fetch the logged-in user's name
+  Future<void> _fetchUserName() async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null) {
+      try {
+        final response = await Supabase.instance.client
+            .from('user_names') // Your table that holds user data
+            .select('name') // Assuming there's a 'name' field in the 'user_names' table
+            .eq('email', user?.email ?? '')
+            .single();
+
+        if (response != null) {
+          setState(() {
+            _userName = response['name'] ?? 'User'; // Set the user's name or default to 'User'
+          });
+        }
+      } catch (e) {
+        print("❌ Error fetching user name: $e");
+        setState(() {
+          _userName = 'Error fetching name';
+        });
+      }
+    }
+  }
 
   void _toggleTheme() {
     setState(() {
@@ -31,7 +63,7 @@ class _StudentsHomeState extends State<StudentsHome> {
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
-      title: 'Welcome, Hanna',
+      title: 'Welcome, ${_userName ?? 'User'}', // Ensure non-null value is passed
       themeMode: _themeMode,
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -144,17 +176,17 @@ class _StudentsHomeState extends State<StudentsHome> {
                   ),
                   child: _isLoading
                       ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurpleAccent),
-                          ),
-                        )
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurpleAccent),
+                    ),
+                  )
                       : Text(
-                          'Get Started',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.deepPurpleAccent),
-                        ),
+                    'Get Started',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.deepPurpleAccent),
+                  ),
                 ),
               ],
             ),

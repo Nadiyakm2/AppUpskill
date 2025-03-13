@@ -24,6 +24,7 @@ class _AdminHomeState extends State<AdminHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Icon(Icons.admin_panel_settings_outlined),
         title: const Text('Admin Dashboard'),
         actions: [
           IconButton(

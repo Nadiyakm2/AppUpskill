@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:upskill_app/auth/register_page.dart';
 import '../Onboarding/onboarding_screen.dart';
 import '../app_users/admin/admin_home.dart';
 import '../app_users/alumni/alumni_home.dart';
@@ -14,7 +13,7 @@ class AuthGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<AuthState>(
       stream: Supabase.instance.client.auth.onAuthStateChange,
       builder: (context, snapshot) {
         // Show loading indicator while waiting for authentication state
@@ -24,57 +23,57 @@ class AuthGate extends StatelessWidget {
           );
         }
 
-        // Check for valid session
-        final session = snapshot.hasData ? snapshot.data!.session : null;
+        // Get the current session from snapshot data
+        final session = snapshot.data?.session;
 
-        if (session != null) {
-          // Check the role of the user if the session is not null
-          return FutureBuilder<Map<String, dynamic>?>(
-            future: _getUserRole(session.user?.id),
-            builder: (context, roleSnapshot) {
-              if (roleSnapshot.connectionState == ConnectionState.waiting) {
-                // Show a loading indicator if fetching the role
-                return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
-                );
-              }
-
-              if (roleSnapshot.hasError) {
-                return Scaffold(
-                  body: Center(child: Text('Error: ${roleSnapshot.error}')),
-                );
-              }
-
-              // Check the role returned from the database
-              final role = roleSnapshot.data?['role'];
-              if (role == null) {
-                // If no role is found, redirect to the role selection page
-                return const Roles();
-              }
-
-              // Navigate based on the role
-              return _navigateToRolePage(role);
-            },
-          );
-        } else {
-          // If no session, redirect to login page
-          return  OnboardingScreen();
+        // If there is no session, show the login page
+        if (session == null) {
+          return const LoginPage();
         }
+
+        // If session is valid, check the user's role from the 'user_names' table
+        return FutureBuilder<Map<String, dynamic>?>(
+          future: _getUserRole(session.user?.email),
+          builder: (context, roleSnapshot) {
+            if (roleSnapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (roleSnapshot.hasError) {
+              return Scaffold(
+                body: Center(child: Text('Error: ${roleSnapshot.error}')),
+              );
+            }
+
+            // Get the role from the response
+            final role = roleSnapshot.data?['role'];
+
+            // If no role is found, return to the role selection page
+            if (role == null) {
+              return const Roles(); // Navigate to role selection page if no role is set
+            }
+
+            // Navigate based on the role
+            return _navigateToRolePage(role);
+          },
+        );
       },
     );
   }
 
-  // Function to fetch the role of the user from 'user_roles' table
-  Future<Map<String, dynamic>?> _getUserRole(String? userId) async {
-    if (userId == null) {
+  // Function to fetch the user's role from the 'user_names' table based on their email
+  Future<Map<String, dynamic>?> _getUserRole(String? email) async {
+    if (email == null) {
       return null;
     }
 
     try {
       final response = await Supabase.instance.client
-          .from('user_roles') // Assuming a table called 'user_roles'
-          .select('role')
-          .eq('user_id', userId)
+          .from('user_names') // Your table that holds user roles
+          .select('role') // Assuming the 'role' column stores the role of the user
+          .eq('email', email) // Use email to fetch the role
           .single(); // Fetch a single record (role) for the user
 
       if (response == null) {
@@ -83,6 +82,7 @@ class AuthGate extends StatelessWidget {
 
       return response;
     } catch (e) {
+      print("❌ Error fetching role: $e");
       return null; // Return null in case of error
     }
   }
@@ -93,7 +93,7 @@ class AuthGate extends StatelessWidget {
       case 'admin':
         return const AdminHome(); // Admin Home Page
       case 'student':
-        return  StudentsHome(); // Student Home Page
+        return StudentsHome(); // Student Home Page
       case 'teacher':
         return const TeacherHome(); // Teacher Home Page
       case 'alumni':
