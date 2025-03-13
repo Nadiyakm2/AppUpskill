@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'onboarding_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class OnboardingScreen extends StatefulWidget {
   @override
@@ -12,7 +12,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose(); // Prevent memory leaks
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -48,25 +48,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             onPageChanged: (index) {
               setState(() => _currentPage = index);
             },
-            children: const [
-              OnboardingPage(
-                title: "Find the right skill for you",
-                subtitle: "You've been thinking about it, now's the time to actually start!",
+            children: [
+              _OnboardingPage(
+                title: "Find the Right Skill for You",
+                subtitle: "You’ve been thinking about it, now’s the time to actually start!",
                 image: "assets/image1.png",
               ),
-              OnboardingPage(
-                title: "Connect, collaborate, and conquer new skills as a team",
+              _OnboardingPage(
+                title: "Connect, Collaborate, and Conquer",
                 subtitle: "Upskilling is more powerful when you do it with others!",
                 image: "assets/image2.png",
               ),
-              OnboardingPage(
-                title: "Upskill at your own rhythm",
+              _OnboardingPage(
+                title: "Upskill at Your Own Rhythm",
                 subtitle: "Flexible learning for a busy life. Learn when you can, grow as you go!",
                 image: "assets/image3.png",
               ),
             ],
           ),
-
           // Progress Indicator
           Positioned(
             bottom: 120,
@@ -98,7 +97,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               children: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade900,
+                    backgroundColor: const Color.fromARGB(255, 113, 84, 163),
                     padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -132,7 +131,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       child: Text(
                         "Skip",
                         style: TextStyle(
-                          color: Colors.blue.shade900,
+                          color:const Color.fromARGB(255, 113, 84, 163),
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
@@ -144,6 +143,120 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _OnboardingPage extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String image;
+
+  const _OnboardingPage({
+    Key? key,
+    required this.title,
+    required this.subtitle,
+    required this.image,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [const Color.fromARGB(255, 159, 204, 241), const Color.fromARGB(255, 231, 172, 241)],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Image with gradient overlay matching the theme
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(255, 12, 7, 21).withOpacity(0.15),
+                      spreadRadius: 4,
+                      blurRadius: 12,
+                      offset: Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Stack(
+                    children: [
+                      ColorFiltered(
+                        colorFilter: ColorFilter.mode(
+                          const Color.fromARGB(255, 211, 199, 255).withOpacity(0.5),
+                          BlendMode.darken,
+                        ),
+                        child: Image.asset(
+                          image,
+                          height: 300,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              const Color.fromARGB(255, 160, 196, 225).withOpacity(0.5),
+                              const Color.fromARGB(255, 221, 154, 233).withOpacity(0.5),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // Title Text with improved typography
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.playfair(
+                  fontSize: 32,  // Increased font size for better readability
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 68, 66, 88), // Darker, more professional color
+                  letterSpacing: 1.5,
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Subtitle Text with improved readability
+              Text(
+                subtitle,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.lato(
+                  fontSize: 18,
+                  color: Colors.grey.shade700,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 1.2,
+                  height: 1.8,  // Improved line height for better readability
+                ),
+              ),
+              const SizedBox(height: 50),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -25,6 +25,26 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
+  // Helper function for form validation
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) return "Enter your email";
+    if (!RegExp(r'^[\w-]+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$').hasMatch(value)) {
+      return "Enter a valid email";
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) return "Enter a password";
+    if (value.length < 6) return "Password must be at least 6 characters";
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if (value != _passwordController.text) return "Passwords do not match";
+    return null;
+  }
+
   void register() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -56,11 +76,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final gradientColors = [Colors.blue.shade100, Colors.purple.shade100];
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blue.shade100, Colors.purple.shade100],
+            colors: gradientColors,
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -73,7 +95,7 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.person_add, size: 80, color: Color.fromARGB(255, 113, 84, 163)),
+                  const Icon(Icons.person_add_alt_outlined, size: 80, color: Color.fromARGB(255, 113, 84, 163)),
                   const SizedBox(height: 20),
                   const Text(
                     "Create an Account",
@@ -85,13 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     label: "Email",
                     icon: Icons.email,
                     inputType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return "Enter your email";
-                      if (!RegExp(r'^[\w-]+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$').hasMatch(value)) {
-                        return "Enter a valid email";
-                      }
-                      return null;
-                    },
+                    validator: _validateEmail,
                   ),
                   const SizedBox(height: 15),
                   _buildTextField(
@@ -99,11 +115,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     label: "Password",
                     icon: Icons.lock,
                     isObscure: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return "Enter a password";
-                      if (value.length < 6) return "Password must be at least 6 characters";
-                      return null;
-                    },
+                    validator: _validatePassword,
                   ),
                   const SizedBox(height: 15),
                   _buildTextField(
@@ -111,10 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     label: "Confirm Password",
                     icon: Icons.lock,
                     isObscure: true,
-                    validator: (value) {
-                      if (value != _passwordController.text) return "Passwords do not match";
-                      return null;
-                    },
+                    validator: _validateConfirmPassword,
                   ),
                   const SizedBox(height: 25),
                   _isLoading

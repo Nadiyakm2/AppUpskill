@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     )..forward();
 
     _logoScaleAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
     _textFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -40,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 
   Future<void> _navigateToNextScreen() async {
-    await Future.delayed(const Duration(seconds: 2)); // Splash animation delay
+    await Future.delayed(const Duration(seconds: 3)); // Increased delay for smooth transitions
 
     if (!mounted) return; // Prevent navigation on unmounted state
 
@@ -101,7 +101,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 160, 148, 255),
+                Color.fromARGB(255, 130, 154, 211),
                 Color.fromARGB(255, 215, 175, 240),
               ],
               begin: Alignment.topLeft,
@@ -116,8 +116,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   scale: _logoScaleAnimation,
                   child: Image.asset(
                     "assets/logo1.png",
-                    width: 120,
-                    height: 120,
+                    width: 150, // Increased logo size for better visibility
+                    height: 150,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -126,15 +126,15 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   child: const Text(
                     "Welcome to Upskill",
                     style: TextStyle(
-                      fontSize: 26,
+                      fontSize: 30, // Increased font size for better readability
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Color.fromARGB(255, 189, 159, 234),
                     ),
                   ),
                 ),
                 const SizedBox(height: 20),
                 const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 111, 78, 165)),
                 ),
               ],
             ),

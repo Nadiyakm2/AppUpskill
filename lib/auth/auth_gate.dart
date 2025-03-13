@@ -28,7 +28,7 @@ class AuthGate extends StatelessWidget {
 
         // If there is no session, show the login page
         if (session == null) {
-          return const OnboardingScreen();
+          return OnboardingScreen();
         }
 
         // If session is valid, check the user's role from the 'user_names' table

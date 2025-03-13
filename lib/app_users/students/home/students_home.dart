@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:upskill_app/app_users/students/Categories/coding.dart';
+import 'package:upskill_app/app_users/students/Categories/coding/coding.dart';
 import 'package:upskill_app/auth/basescaffold.dart';
 
 import 'package:upskill_app/app_users/students/Categories/analytics.dart';
@@ -200,7 +200,7 @@ class _StudentsHomeState extends State<StudentsHome> {
   }
 
   Widget _buildCategoryRow(BuildContext context) {
-    List<String> categories = ['Coding', 'Designing', 'Marketing', 'Analytics'];
+    List<String> categories = ['Coding', 'Designing', 'Marketing', 'Analytics',];
     List<String> icons = [
       'assets/images/coding.png',
       'assets/images/designing.png',
