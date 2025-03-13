@@ -20,9 +20,9 @@ class OnboardingPage extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.blue.shade50, Colors.white],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.blue.shade100, Colors.purple.shade100],
           ),
         ),
         child: Padding(
@@ -31,7 +31,7 @@ class OnboardingPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Image with shadow, border, and rounded corners
+              // Image with styling
               AnimatedContainer(
                 duration: const Duration(milliseconds: 500),
                 curve: Curves.easeInOut,
@@ -39,10 +39,10 @@ class OnboardingPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      spreadRadius: 5,
-                      blurRadius: 10,
-                      offset: Offset(0, 5),
+                      color: Colors.black.withOpacity(0.15),
+                      spreadRadius: 3,
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
                     ),
                   ],
                   border: Border.all(
@@ -54,7 +54,7 @@ class OnboardingPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   child: Image.asset(
                     image,
-                    height: 320,
+                    height: 300,
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -66,9 +66,9 @@ class OnboardingPage extends StatelessWidget {
                 title,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.poppins(
-                  fontSize: 28,
+                  fontSize: 26,
                   fontWeight: FontWeight.w700,
-                  color: Colors.blue.shade900,
+                  color: const Color.fromARGB(255, 113, 84, 163), // Matching Register Page
                   letterSpacing: 1.2,
                 ),
               ),
@@ -88,11 +88,15 @@ class OnboardingPage extends StatelessWidget {
               ),
               const SizedBox(height: 50),
 
-              // Decorative Icon with Animation
-              Icon(
-                Icons.arrow_downward,
-                size: 40,
-                color: Colors.blue.shade300,
+              // Animated Downward Arrow
+              AnimatedOpacity(
+                duration: const Duration(seconds: 1),
+                opacity: 1.0,
+                child: const Icon(
+                  Icons.keyboard_double_arrow_down_rounded,
+                  size: 40,
+                  color: Color.fromARGB(255, 113, 84, 163),
+                ),
               ),
             ],
           ),

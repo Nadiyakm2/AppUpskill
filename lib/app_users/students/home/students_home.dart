@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:upskill_app/app_users/students/Categories/coding.dart';
 import 'package:upskill_app/auth/basescaffold.dart';
+
 import 'package:upskill_app/app_users/students/Categories/analytics.dart';
 import 'package:upskill_app/app_users/students/Categories/designing.dart';
 import 'package:upskill_app/app_users/students/Categories/marketing.dart';

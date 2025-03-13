@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:upskill_app/auth/theme_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upskill_app/Onboarding/onboarding_screen.dart';
@@ -56,7 +57,7 @@ class AppRoutes {
   static const String auth = '/auth';
   static const String studentHome = '/StudentsHome';
   static const String teacherHome = '/TeacherHome';
-  static const String alumniHome = '/AluminiHome';
+  static const String alumniHome = '/AlumniHome';
   static const String adminHome = '/AdminHome';
   static const String onboarding = '/onboarding';
 
@@ -126,13 +127,13 @@ class AppRoutes {
 
   static Widget _getHomeScreen(String role) {
     switch (role) {
-      case 'student':
+      case 'Student':
         return StudentsHome();
-      case 'teacher':
+      case 'Teacher':
         return TeacherHome();
-      case 'alumni':
+      case 'Alumni':
         return AlumniHome();
-      case 'admin':
+      case 'Admin':
         return AdminHome();
       default:
         return StudentsHome();
