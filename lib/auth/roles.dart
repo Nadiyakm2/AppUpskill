@@ -19,14 +19,30 @@ class _RolesState extends State<Roles> {
     'admin': 'Tawakkul',
   };
 
+  // Function to check if the user exists in the user_names table
+  Future<bool> userExists(String userId) async {
+    final response = await Supabase.instance.client
+        .from('user_names')
+        .select('id')
+        .eq('user_id', userId)
+        .single();
+
+    return response != null;
+  }
+
+  // Function to store or update user data in the user_names table
   Future<void> storeRoleInSupabase(String role) async {
     final user = Supabase.instance.client.auth.currentUser;
+
+    // Check if user is logged in
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('User is not logged in')),
       );
       return;
     }
+
+    // Check if userName is valid
     if (userName == null || userName!.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter your name')),
@@ -35,18 +51,58 @@ class _RolesState extends State<Roles> {
     }
 
     try {
-      await Supabase.instance.client.from('user_names').upsert({
-        'user_id': user.id,
-        'role': role,
-        'email': user.email,
-        'name': userName!.trim(),
-      });
-      navigateToRolePage(role);
+      final user = Supabase.instance.client.auth.currentUser;
+
+      // Ensure the user is authenticated and their email is not null
+      if (user?.email != null) {
+        final String email = user!.email!; // Ensure email is not null
+
+        // Try to fetch the user data based on email
+        final response = await Supabase.instance.client
+            .from('user_names')
+            .select('email')  // Check using email
+            .eq('email', email); // Use the email to find the user
+
+        // Check if the response is empty (no rows returned)
+        if (response.isEmpty) {
+          // User does not exist, so insert a new record
+          await Supabase.instance.client.from('user_names').insert({
+            'email': email,  // Use email as the unique identifier
+            'role': role,     // Selected role
+            'name': userName!.trim(), // User's name
+            'created_at': DateTime.now().toIso8601String(),
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Profile created successfully')),
+          );
+        } else {
+          // User exists, update only the name and role columns
+          await Supabase.instance.client.from('user_names').update({
+            'role': role,         // Update selected role
+            'name': userName!.trim(), // Update user's name
+            'updated_at': DateTime.now().toIso8601String(), // Timestamp
+          }).eq('email', email); // Only update the record where the email matches
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Profile updated successfully')),
+          );
+        }
+
+        // Navigate to the appropriate page based on the role
+        navigateToRolePage(role);
+      } else {
+        // Handle the case when email is null (user is not authenticated)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User email is not available')),
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
     }
+
   }
 
   void navigateToRolePage(String role) {
@@ -147,18 +203,25 @@ class _RolesState extends State<Roles> {
                           onPressed: selectedRole == null || userName == null || userName!.trim().isEmpty
                               ? null
                               : () async {
-                                  final roleKey = selectedRole?.toLowerCase();
-                                  if (roleCodes.containsKey(roleKey) && code != roleCodes[roleKey]) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Incorrect code')),
-                                    );
-                                    return;
-                                  }
-                                  await storeRoleInSupabase(selectedRole!);
-                                },
-                          style: ElevatedButton.styleFrom(
-                          backgroundColor:const Color.fromARGB(255, 128, 103, 173), // A balanced color matching the theme
+                            final roleKey = selectedRole?.toLowerCase();
+                            if (roleCodes.containsKey(roleKey) && code != roleCodes[roleKey]) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Incorrect code')),
+                              );
+                              return;
+                            }
 
+                            // Check if selectedRole is not null before calling the method
+                            if (selectedRole != null) {
+                              await storeRoleInSupabase(selectedRole!);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Please select a role')),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(255, 128, 103, 173), // A balanced color matching the theme
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
