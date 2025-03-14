@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'mcq_service.dart';
+import 'package:upskill_app/app_users/students/mcq_service.dart';
 import 'mcq_model.dart';
+import 'package:upskill_app/utils/app_routes.dart';
 
 class MCQScreen extends StatefulWidget {
   final String category;
   final String difficulty;
 
-  MCQScreen({required this.category, required this.difficulty});
+  const MCQScreen({Key? key, required this.category, required this.difficulty}) : super(key: key);
 
   @override
   _MCQScreenState createState() => _MCQScreenState();
@@ -24,6 +25,18 @@ class _MCQScreenState extends State<MCQScreen> {
     _loadQuestions();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
+    if (args != null) {
+      setState(() {
+        _loadQuestions();
+      });
+    }
+  }
+
   Future<void> _loadQuestions() async {
     final questions = await _mcqService.fetchMCQs(widget.category, widget.difficulty);
     setState(() {
@@ -31,36 +44,8 @@ class _MCQScreenState extends State<MCQScreen> {
     });
   }
 
-  void _checkAnswer(String selectedAnswer) {
-    if (_questions[_currentQuestionIndex].correctAnswer == selectedAnswer) {
-      setState(() {
-        _score += 10;
-      });
-    }
-    if (_currentQuestionIndex < _questions.length - 1) {
-      setState(() {
-        _currentQuestionIndex++;
-      });
-    } else {
-      // Show result or leaderboard
-      _showResult();
-    }
-  }
-
   void _showResult() {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text("Quiz Finished!"),
-        content: Text("Your score: $_score"),
-        actions: [
-          TextButton(
-            child: Text("OK"),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
-      ),
-    );
+    Navigator.pushNamed(context, AppRoutes.leaderboardScreen, arguments: {'score': _score});
   }
 
   @override
@@ -72,18 +57,24 @@ class _MCQScreenState extends State<MCQScreen> {
     return Scaffold(
       appBar: AppBar(title: Text("Quiz - ${widget.category}")),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text(
-              currentQuestion.question,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            Text(currentQuestion.question, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             SizedBox(height: 20),
             Column(
               children: currentQuestion.options.map((option) {
                 return ElevatedButton(
-                  onPressed: () => _checkAnswer(option),
+                  onPressed: () => setState(() {
+                    if (currentQuestion.correctAnswer == option) {
+                      _score += 10;
+                    }
+                    if (_currentQuestionIndex < _questions.length - 1) {
+                      _currentQuestionIndex++;
+                    } else {
+                      _showResult();
+                    }
+                  }),
                   child: Text(option),
                 );
               }).toList(),

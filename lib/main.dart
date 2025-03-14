@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:upskill_app/auth/theme_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:upskill_app/Onboarding/onboarding_screen.dart';
+import 'package:upskill_app/onboarding/onboarding_screen.dart';
 import 'package:upskill_app/app_users/admin/admin_home.dart';
 import 'package:upskill_app/app_users/alumni/alumni_home.dart';
 import 'package:upskill_app/app_users/students/home/students_home.dart';
 import 'package:upskill_app/app_users/teacher/teacher_home.dart';
 import 'package:upskill_app/auth/login_page.dart';
-import 'package:upskill_app/Splash.dart';
+import 'package:upskill_app/splash.dart';
 import 'package:upskill_app/auth/register_page.dart';
+import 'package:upskill_app/utils/app_routes.dart'; // ✅ Added routes import
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +48,7 @@ class UpskillApp extends StatelessWidget {
       darkTheme: darkTheme,
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoutes.root,
-      routes: AppRoutes.routes,
+      routes: AppRoutes.routes, // ✅ Keeps all existing routes + MCQ & Leaderboard
     );
   }
 }
@@ -60,6 +61,9 @@ class AppRoutes {
   static const String alumniHome = '/AlumniHome';
   static const String adminHome = '/AdminHome';
   static const String onboarding = '/onboarding';
+
+  // ✅ New Routes for MCQ and Leaderboard
+
 
   static Map<String, WidgetBuilder> get routes => {
     root: (context) => FutureBuilder<Widget>(
@@ -80,6 +84,9 @@ class AppRoutes {
     alumniHome: (context) => AlumniHome(),
     adminHome: (context) => AdminHome(),
     onboarding: (context) => OnboardingScreen(),
+
+    // ✅ Added MCQ & Leaderboard Routes
+  
   };
 
   static Future<Widget> _getStartupScreen() async {
@@ -140,4 +147,3 @@ class AppRoutes {
     }
   }
 }
-
