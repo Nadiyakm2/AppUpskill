@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:upskill_app/app_users/alumni/alumni_home.dart';
 import 'package:upskill_app/auth/auth_service.dart';
 import 'package:upskill_app/auth/register_page.dart';
+import 'package:upskill_app/auth/roles.dart'; // Import the Roles page
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:upskill_app/auth/roles.dart'; // Import Roles page
-import '../app_users/admin/admin_home.dart';
-import '../app_users/students/home/students_home.dart';
-import '../app_users/teacher/teacher_home.dart';  // Student home page
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -30,55 +26,20 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      // Sign in the user
+      // Sign in the user using the provided email and password
       await authService.signInWithEmailPassword(email, password);
 
-      // Get the current logged-in user
+      // Get the current logged-in user from Supabase Auth
       final user = Supabase.instance.client.auth.currentUser;
       if (user == null) {
         throw Exception('User is not logged in');
       }
 
-      // Query the 'user_names' table to check if the email exists
-      final response = await Supabase.instance.client
-          .from('user_names')
-          .select('email, role')  // Assuming 'email' and 'role' columns exist
-          .eq('email', email)
-          .single();
-
-      // Check if the email is found in the user_names table and get role
-      if (response != null && response['role'] != null) {
-        final role = response['role'];
-
-        // Navigate to the appropriate home page based on the role
-        if (role == 'admin') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => AdminHome()),
-          );
-        } else if (role == 'student') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => StudentsHome()),
-          );
-        } else if (role == 'teacher') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => TeacherHome()),
-          );
-        } else if (role == 'alumini') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => AlumniHome()),
-          );
-        }
-      } else {
-        // If email is not found or role is not set, navigate to Roles page
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => Roles()),
-        );
-      }
+      // After successful login, navigate to the Roles page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const Roles()), // Navigate to the Roles page
+      );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
@@ -142,17 +103,17 @@ class _LoginPageState extends State<LoginPage> {
                 _isLoading
                     ? const CircularProgressIndicator(color: Color.fromARGB(255, 130, 75, 163))
                     : ElevatedButton(
-                        onPressed: login,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 113, 84, 163),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                        ),
-                        child: const Text(
-                          "Login",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                      ),
+                  onPressed: login,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 113, 84, 163),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  ),
+                  child: const Text(
+                    "Login",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () {
