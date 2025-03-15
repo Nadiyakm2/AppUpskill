@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class JobPostPage extends StatelessWidget {
+class ConnectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

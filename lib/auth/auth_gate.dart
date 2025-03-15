@@ -97,7 +97,7 @@ class AuthGate extends StatelessWidget {
       case 'teacher':
         return const TeacherHome(); // Teacher Home Page
       case 'alumni':
-        return const AlumniHome(); // Alumni Home Page
+        return  AlumniHome(); // Alumni Home Page
       default:
         return const Roles(); // Navigate to role selection page if unknown role
     }
