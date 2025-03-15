@@ -58,7 +58,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
         ),
         scaffoldBackgroundColor: Colors.white,
         textTheme: TextTheme(
-          bodyMedium: TextStyle(color: Colors.black87),  // Primary text color in light mode
+          bodyMedium: TextStyle(color: const Color.fromARGB(221, 224, 217, 217)),  // Primary text color in light mode
           titleLarge: TextStyle(color: Colors.black87),  // For app bar title
         ),
         iconTheme: IconThemeData(color: Colors.deepPurpleAccent),
@@ -69,16 +69,16 @@ class _BaseScaffoldState extends State<BaseScaffold> {
           backgroundColor: Color.fromARGB(255, 81, 70, 115),
           iconTheme: IconThemeData(color: Colors.white),  // Ensure icons are white
         ),
-        scaffoldBackgroundColor: Colors.black,  // Set the screen background to black in dark mode
+        scaffoldBackgroundColor: const Color.fromARGB(255, 95, 88, 88),  // Set the screen background to black in dark mode
         textTheme: TextTheme(
           bodyMedium: TextStyle(color: Colors.white),  // White text color in dark mode
           titleLarge: TextStyle(color: Colors.white),  // For app bar title
         ),
         iconTheme: IconThemeData(color: Colors.white),
-        cardColor: Colors.grey[800],  // Set the card background color to gray
+        cardColor: const Color.fromARGB(255, 138, 132, 132),  // Set the card background color to gray
         buttonTheme: ButtonThemeData(buttonColor: const Color.fromARGB(255, 56, 38, 88)),
         inputDecorationTheme: InputDecorationTheme(
-          fillColor: const Color.fromARGB(136, 19, 141, 157),
+          fillColor: const Color.fromARGB(135, 109, 133, 136),
           hintStyle: TextStyle(color: Colors.white54),  // Light gray hint color
         ),
       ),

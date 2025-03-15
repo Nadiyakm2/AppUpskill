@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:upskill_app/auth/theme_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upskill_app/onboarding/onboarding_screen.dart';
