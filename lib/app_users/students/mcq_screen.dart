@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:upskill_app/app_users/students/mcq_service.dart';
-import 'mcq_model.dart';
+import '../students/mcq_model.dart';
 import 'package:upskill_app/utils/app_routes.dart';
 
 class MCQScreen extends StatefulWidget {

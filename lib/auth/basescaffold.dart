@@ -22,6 +22,13 @@ class BaseScaffold extends StatefulWidget {
 
 class _BaseScaffoldState extends State<BaseScaffold> {
   final authService = AuthService();
+  late ThemeMode _themeMode;
+
+  @override
+  void initState() {
+    super.initState();
+    _themeMode = widget.themeMode;
+  }
 
   // Log out function
   void logout() async {
@@ -31,32 +38,48 @@ class _BaseScaffoldState extends State<BaseScaffold> {
       MaterialPageRoute(builder: (context) => LoginPage()), // Navigate to LoginPage
     );
   }
+
+  // Theme toggle function
+  void _toggleTheme() {
+    setState(() {
+      _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false, // Ensure this is set to false
-      themeMode: widget.themeMode,
+      themeMode: _themeMode,
       theme: ThemeData.light().copyWith(
-        appBarTheme: AppBarTheme(backgroundColor: Colors.deepPurpleAccent),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.deepPurpleAccent,
+          iconTheme: IconThemeData(color: Colors.white),  // Ensuring the icons in AppBar are white
+        ),
         scaffoldBackgroundColor: Colors.white,
         textTheme: TextTheme(
-          bodyMedium: TextStyle(color: Colors.black87),
-          titleLarge: TextStyle(color: Colors.black87),
+          bodyMedium: TextStyle(color: Colors.black87),  // Primary text color in light mode
+          titleLarge: TextStyle(color: Colors.black87),  // For app bar title
         ),
+        iconTheme: IconThemeData(color: Colors.deepPurpleAccent),
+        buttonTheme: ButtonThemeData(buttonColor: Colors.deepPurpleAccent),
       ),
       darkTheme: ThemeData.dark().copyWith(
-        appBarTheme: AppBarTheme(backgroundColor: Color.fromARGB(255, 96, 72, 161)),
-        scaffoldBackgroundColor: Color.fromARGB(221, 24, 16, 16),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Color.fromARGB(255, 81, 70, 115),
+          iconTheme: IconThemeData(color: Colors.white),  // Ensure icons are white
+        ),
+        scaffoldBackgroundColor: Colors.black,  // Set the screen background to black in dark mode
         textTheme: TextTheme(
-          bodyMedium: TextStyle(color: Colors.white),
-          titleLarge: TextStyle(color: Colors.white),
+          bodyMedium: TextStyle(color: Colors.white),  // White text color in dark mode
+          titleLarge: TextStyle(color: Colors.white),  // For app bar title
         ),
         iconTheme: IconThemeData(color: Colors.white),
-        cardColor: Colors.black45,
-        buttonTheme: ButtonThemeData(buttonColor: Colors.deepPurple),
+        cardColor: Colors.grey[800],  // Set the card background color to gray
+        buttonTheme: ButtonThemeData(buttonColor: const Color.fromARGB(255, 56, 38, 88)),
         inputDecorationTheme: InputDecorationTheme(
-          fillColor: Colors.black54,
-          hintStyle: TextStyle(color: Colors.white54),
+          fillColor: const Color.fromARGB(136, 19, 141, 157),
+          hintStyle: TextStyle(color: Colors.white54),  // Light gray hint color
         ),
       ),
       home: Scaffold(
@@ -64,12 +87,23 @@ class _BaseScaffoldState extends State<BaseScaffold> {
           title: Text(widget.title),
           actions: [
             IconButton(
+              onPressed: _toggleTheme,  // Toggle theme when pressed
+              icon: Icon(
+                _themeMode == ThemeMode.light
+                    ? Icons.wb_sunny
+                    : Icons.nightlight_round,
+                color: _themeMode == ThemeMode.light
+                    ? const Color.fromARGB(255, 204, 202, 182)
+                    : Colors.white,
+              ),
+            ),
+            IconButton(
               onPressed: logout,  // Log out when the icon is pressed
               icon: const Icon(
                 Icons.logout,
-                color:  Color(0xffa88979),
+                color: Color.fromARGB(255, 201, 191, 186),  // Light brown logout icon color
               ),
-            )
+            ),
           ],
         ),
         body: widget.body,

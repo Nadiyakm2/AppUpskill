@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:upskill_app/Pages/notification.dart';
+
 import 'package:upskill_app/app_users/alumni/job_post.dart';
 import 'package:upskill_app/app_users/alumni/mentorship.dart';
 import 'package:upskill_app/app_users/alumni/connections.dart';
