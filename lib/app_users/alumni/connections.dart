@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ConnectionPage extends StatelessWidget {
+class Connectionpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

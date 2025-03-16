@@ -7,6 +7,7 @@ class BaseScaffold extends StatefulWidget {
   final Widget body;
   final List<Widget>? actions;
   final ThemeMode themeMode;
+  final Widget? bottomNavigationBar; // Add bottomNavigationBar parameter
 
   const BaseScaffold({
     super.key,
@@ -14,6 +15,7 @@ class BaseScaffold extends StatefulWidget {
     required this.body,
     this.actions,
     this.themeMode = ThemeMode.light,
+    this.bottomNavigationBar, // Add bottomNavigationBar in constructor
   });
 
   @override
@@ -32,11 +34,36 @@ class _BaseScaffoldState extends State<BaseScaffold> {
 
   // Log out function
   void logout() async {
-    await authService.signOut();  // Sign the user out
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => LoginPage()), // Navigate to LoginPage
+    bool shouldLogout = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Log Out'),
+        content: Text('Are you sure you want to log out?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, false); // User does not want to log out
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, true); // User confirmed to log out
+            },
+            child: Text('Log Out'),
+          ),
+        ],
+      ),
     );
+
+    if (shouldLogout == true) {
+      await authService.signOut(); // Sign the user out
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()), // Navigate to LoginPage
+        (route) => false, // Remove all previous routes from the stack
+      );
+    }
   }
 
   // Theme toggle function
@@ -54,12 +81,12 @@ class _BaseScaffoldState extends State<BaseScaffold> {
       theme: ThemeData.light().copyWith(
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.deepPurpleAccent,
-          iconTheme: IconThemeData(color: Colors.white),  // Ensuring the icons in AppBar are white
+          iconTheme: IconThemeData(color: Colors.white), // Ensuring the icons in AppBar are white
         ),
         scaffoldBackgroundColor: Colors.white,
         textTheme: TextTheme(
-          bodyMedium: TextStyle(color: const Color.fromARGB(221, 224, 217, 217)),  // Primary text color in light mode
-          titleLarge: TextStyle(color: Colors.black87),  // For app bar title
+          bodyMedium: TextStyle(color: const Color.fromARGB(221, 224, 217, 217)), // Primary text color in light mode
+          titleLarge: TextStyle(color: Colors.black87), // For app bar title
         ),
         iconTheme: IconThemeData(color: Colors.deepPurpleAccent),
         buttonTheme: ButtonThemeData(buttonColor: Colors.deepPurpleAccent),
@@ -67,27 +94,27 @@ class _BaseScaffoldState extends State<BaseScaffold> {
       darkTheme: ThemeData.dark().copyWith(
         appBarTheme: AppBarTheme(
           backgroundColor: Color.fromARGB(255, 81, 70, 115),
-          iconTheme: IconThemeData(color: Colors.white),  // Ensure icons are white
+          iconTheme: IconThemeData(color: Colors.white), // Ensure icons are white
         ),
-        scaffoldBackgroundColor: const Color.fromARGB(255, 95, 88, 88),  // Set the screen background to black in dark mode
+        scaffoldBackgroundColor: const Color.fromARGB(255, 95, 88, 88), // Set the screen background to black in dark mode
         textTheme: TextTheme(
-          bodyMedium: TextStyle(color: Colors.white),  // White text color in dark mode
-          titleLarge: TextStyle(color: Colors.white),  // For app bar title
+          bodyMedium: TextStyle(color: Colors.white), // White text color in dark mode
+          titleLarge: TextStyle(color: Colors.white), // For app bar title
         ),
         iconTheme: IconThemeData(color: Colors.white),
-        cardColor: const Color.fromARGB(255, 138, 132, 132),  // Set the card background color to gray
+        cardColor: const Color.fromARGB(255, 138, 132, 132), // Set the card background color to gray
         buttonTheme: ButtonThemeData(buttonColor: const Color.fromARGB(255, 56, 38, 88)),
         inputDecorationTheme: InputDecorationTheme(
           fillColor: const Color.fromARGB(135, 109, 133, 136),
-          hintStyle: TextStyle(color: Colors.white54),  // Light gray hint color
+          hintStyle: TextStyle(color: Colors.white54), // Light gray hint color
         ),
       ),
       home: Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
-          actions: [
+          actions: widget.actions ?? [
             IconButton(
-              onPressed: _toggleTheme,  // Toggle theme when pressed
+              onPressed: _toggleTheme, // Toggle theme when pressed
               icon: Icon(
                 _themeMode == ThemeMode.light
                     ? Icons.wb_sunny
@@ -98,15 +125,16 @@ class _BaseScaffoldState extends State<BaseScaffold> {
               ),
             ),
             IconButton(
-              onPressed: logout,  // Log out when the icon is pressed
+              onPressed: logout, // Log out when the icon is pressed
               icon: const Icon(
                 Icons.logout,
-                color: Color.fromARGB(255, 201, 191, 186),  // Light brown logout icon color
+                color: Color.fromARGB(255, 201, 191, 186), // Light brown logout icon color
               ),
             ),
           ],
         ),
         body: widget.body,
+        bottomNavigationBar: widget.bottomNavigationBar, // Pass the bottomNavigationBar to Scaffold
       ),
     );
   }
