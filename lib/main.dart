@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:upskill_app/auth/theme_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upskill_app/Onboarding/onboarding_screen.dart';
 import 'package:upskill_app/app_users/admin/admin_home.dart';
 import 'package:upskill_app/app_users/alumni/alumni_home.dart';
 import 'package:upskill_app/app_users/students/home/students_home.dart';
+import 'package:upskill_app/app_users/teacher/Pages/Course_management.dart';
+import 'package:upskill_app/app_users/teacher/Pages/alumini_placement.dart';
+import 'package:upskill_app/app_users/teacher/Pages/certification_verification.dart';
+import 'package:upskill_app/app_users/teacher/Pages/chatbot.dart';
+import 'package:upskill_app/app_users/teacher/Pages/events_announcement.dart';
+import 'package:upskill_app/app_users/teacher/Pages/quiz_mangement.dart';
+
+import 'package:upskill_app/app_users/teacher/Pages/student_details.dart';
 import 'package:upskill_app/app_users/teacher/teacher_home.dart';
 import 'package:upskill_app/auth/login_page.dart';
 import 'package:upskill_app/Splash.dart';
 import 'package:upskill_app/auth/register_page.dart';
+
+// Import Teacher Dashboard pages
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,9 +66,18 @@ class AppRoutes {
   static const String auth = '/auth';
   static const String studentHome = '/StudentsHome';
   static const String teacherHome = '/TeacherHome';
-  static const String alumniHome = '/AlumniHome';
+  static const String alumniHome = '/AluminiHome';
   static const String adminHome = '/AdminHome';
   static const String onboarding = '/onboarding';
+
+  // Teacher Dashboard Routes
+  static const String studentProfiles = '/student-profiles';
+  static const String courseManagement = '/course-management';
+  static const String quizManagement = '/quiz-management';
+  static const String certificateVerification = '/certificate-verification';
+  static const String placementAlumni = '/placement-alumni';
+  static const String eventAnnouncement = '/event-announcement';
+  static const String chatbot = '/chatbot';
 
   static Map<String, WidgetBuilder> get routes => {
     root: (context) => FutureBuilder<Widget>(
@@ -80,6 +98,15 @@ class AppRoutes {
     alumniHome: (context) => AlumniHome(),
     adminHome: (context) => AdminHome(),
     onboarding: (context) => OnboardingScreen(),
+
+    // Teacher Dashboard Routes
+    studentProfiles: (context) => StudentProfilesPage(),
+    courseManagement: (context) => CourseManagementPage(),
+    quizManagement: (context) => QuizManagementPage(),
+    certificateVerification: (context) => CertificateVerificationPage(),
+    placementAlumni: (context) => PlacementAlumniPage(),
+    eventAnnouncement: (context) => EventAnnouncementPage(),
+    chatbot: (context) => ChatbotPage(),
   };
 
   static Future<Widget> _getStartupScreen() async {
@@ -127,17 +154,16 @@ class AppRoutes {
 
   static Widget _getHomeScreen(String role) {
     switch (role) {
-      case 'Student':
+      case 'student':
         return StudentsHome();
-      case 'Teacher':
+      case 'teacher':
         return TeacherHome();
-      case 'Alumni':
+      case 'alumni':
         return AlumniHome();
-      case 'Admin':
+      case 'admin':
         return AdminHome();
       default:
         return StudentsHome();
     }
   }
 }
-

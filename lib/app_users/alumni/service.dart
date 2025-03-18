@@ -4,7 +4,7 @@ class AlumniService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
   // Fetch all alumni
-  Future<List<Map<String, dynamic>>> fetchAlumni() async {
+  Future<List<Map<String, dynamic>>> fetchAlumni() async { 
     final response = await _supabase.from('alumni').select();
     if (response.isNotEmpty) {
       return List<Map<String, dynamic>>.from(response);
