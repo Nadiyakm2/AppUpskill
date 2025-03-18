@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:upskill_app/Onboarding/onboarding_screen.dart';
+import 'package:upskill_app/onboarding/onboarding_screen.dart';
 import 'package:upskill_app/app_users/admin/admin_home.dart';
 import 'package:upskill_app/app_users/alumni/alumni_home.dart';
 import 'package:upskill_app/app_users/students/home/students_home.dart';
@@ -15,8 +15,9 @@ import 'package:upskill_app/app_users/teacher/Pages/quiz_mangement.dart';
 import 'package:upskill_app/app_users/teacher/Pages/student_details.dart';
 import 'package:upskill_app/app_users/teacher/teacher_home.dart';
 import 'package:upskill_app/auth/login_page.dart';
-import 'package:upskill_app/Splash.dart';
+import 'package:upskill_app/splash.dart';
 import 'package:upskill_app/auth/register_page.dart';
+import 'package:upskill_app/utils/app_routes.dart'; // ✅ Added routes import
 
 // Import Teacher Dashboard pages
 
@@ -56,7 +57,7 @@ class UpskillApp extends StatelessWidget {
       darkTheme: darkTheme,
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoutes.root,
-      routes: AppRoutes.routes,
+      routes: AppRoutes.routes, // ✅ Keeps all existing routes + MCQ & Leaderboard
     );
   }
 }
@@ -79,6 +80,7 @@ class AppRoutes {
   static const String eventAnnouncement = '/event-announcement';
   static const String chatbot = '/chatbot';
 
+
   static Map<String, WidgetBuilder> get routes => {
     root: (context) => FutureBuilder<Widget>(
       future: _getStartupScreen(),
@@ -99,6 +101,7 @@ class AppRoutes {
     adminHome: (context) => AdminHome(),
     onboarding: (context) => OnboardingScreen(),
 
+
     // Teacher Dashboard Routes
     studentProfiles: (context) => StudentProfilesPage(),
     courseManagement: (context) => CourseManagementPage(),
@@ -107,6 +110,7 @@ class AppRoutes {
     placementAlumni: (context) => PlacementAlumniPage(),
     eventAnnouncement: (context) => EventAnnouncementPage(),
     chatbot: (context) => ChatbotPage(),
+
   };
 
   static Future<Widget> _getStartupScreen() async {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:upskill_app/app_users/students/Categories/coding/coding.dart';
 import 'package:upskill_app/auth/basescaffold.dart';
-
 import 'package:upskill_app/app_users/students/Categories/analytics.dart';
 import 'package:upskill_app/app_users/students/Categories/designing.dart';
 import 'package:upskill_app/app_users/students/Categories/marketing.dart';
@@ -57,8 +56,58 @@ class _StudentsHomeState extends State<StudentsHome> {
     });
   }
 
+  Future<void> _signOut() async {
+    try {
+      await Supabase.instance.client.auth.signOut();
+      Navigator.pushReplacementNamed(context, '/login'); // Assuming you have a login screen
+    } catch (e) {
+      print("❌ Error during sign-out: $e");
+      // Handle sign-out error if necessary
+    }
+  }
+
   void _navigateToScreen(Widget screen) {
     Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+  }
+
+  void _handleMenuAction(String value) {
+    switch (value) {
+      case 'profile':
+        _navigateToScreen(ProfileAndSettingsScreen());
+        break;
+      case 'logout':
+        _showLogoutConfirmationDialog();
+        break;
+      default:
+        break;
+    }
+  }
+
+  void _showLogoutConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Are you sure you want to logout?'),
+          content: Text('You will be logged out of the app.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await _signOut(); // Perform the logout action
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Logout'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -93,6 +142,17 @@ class _StudentsHomeState extends State<StudentsHome> {
           icon: Icon(Icons.notifications, color: Colors.white),
           onPressed: () => _navigateToScreen(NotificationsScreen()),
         ),
+        IconButton(
+          icon: Icon(
+            _themeMode == ThemeMode.light
+                ? Icons.wb_sunny
+                : Icons.nightlight_round,
+            color: _themeMode == ThemeMode.light
+                ? const Color.fromARGB(255, 204, 202, 182)
+                : Colors.white,
+          ),
+          onPressed: _toggleTheme,
+        ),
         PopupMenuButton<String>(
           icon: Icon(Icons.more_vert, color: Colors.white),
           onSelected: _handleMenuAction,
@@ -103,27 +163,14 @@ class _StudentsHomeState extends State<StudentsHome> {
                 child: Text('Profile & Settings'),
               ),
               PopupMenuItem(
-                value: 'theme',
-                child: Text(_themeMode == ThemeMode.light ? 'Dark Mode' : 'Light Mode'),
+                value: 'logout',
+                child: Text('Logout'),
               ),
             ];
           },
         ),
       ],
     );
-  }
-
-  void _handleMenuAction(String value) {
-    switch (value) {
-      case 'profile':
-        _navigateToScreen(ProfileAndSettingsScreen());
-        break;
-      case 'theme':
-        _toggleTheme();
-        break;
-      default:
-        break;
-    }
   }
 
   Widget _buildSectionTitle(String title) {
@@ -177,17 +224,17 @@ class _StudentsHomeState extends State<StudentsHome> {
                   ),
                   child: _isLoading
                       ? SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurpleAccent),
-                    ),
-                  )
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurpleAccent),
+                          ),
+                        )
                       : Text(
-                    'Get Started',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.deepPurpleAccent),
-                  ),
+                          'Get Started',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.deepPurpleAccent),
+                        ),
                 ),
               ],
             ),
@@ -200,7 +247,7 @@ class _StudentsHomeState extends State<StudentsHome> {
   }
 
   Widget _buildCategoryRow(BuildContext context) {
-    List<String> categories = ['Coding', 'Designing', 'Marketing', 'Analytics',];
+    List<String> categories = ['Coding', 'Designing', 'Marketing', 'Analytics'];
     List<String> icons = [
       'assets/images/coding.png',
       'assets/images/designing.png',
@@ -283,25 +330,22 @@ class _StudentsHomeState extends State<StudentsHome> {
             child: Image.asset(
               imagePath,
               width: 120,
-              height: 80,
+              height: 90,
               fit: BoxFit.cover,
             ),
           ),
           SizedBox(height: 10),
           Text(
             title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: _themeMode == ThemeMode.dark ? Colors.white : Colors.black87,
-              fontFamily: 'Poppins',
-            ),
+            style: TextStyle(fontSize: 14, color: _themeMode == ThemeMode.dark ? Colors.white : Colors.black87),
           ),
         ],
       ),
     );
   }
+
+  
+
 
   Widget _buildLeaderboardCard() {
     return Container(

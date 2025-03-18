@@ -2,19 +2,15 @@ class Alumni {
   final String id;
   final String name;
   final String email;
-  final String company;
-  final String experience;
-  final bool isMentor;
-  final String profileImage;
+  final String role;
+  final String profilePicture;
 
   Alumni({
     required this.id,
     required this.name,
     required this.email,
-    required this.company,
-    required this.experience,
-    required this.isMentor,
-    required this.profileImage,
+    required this.role,
+    required this.profilePicture,
   });
 
   // Convert JSON to Alumni object
@@ -23,10 +19,8 @@ class Alumni {
       id: json['id'],
       name: json['name'],
       email: json['email'],
-      company: json['company'],
-      experience: json['experience'],
-      isMentor: json['isMentor'],
-      profileImage: json['profile_image'] ?? '',
+      role: json['role'],
+      profilePicture: json['profile_picture'],
     );
   }
 
@@ -36,10 +30,8 @@ class Alumni {
       'id': id,
       'name': name,
       'email': email,
-      'company': company,
-      'experience': experience,
-      'isMentor': isMentor,
-      'profile_image': profileImage,
+      'role': role,
+      'profile_picture': profilePicture,
     };
   }
 }
