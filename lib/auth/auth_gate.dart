@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:upskill_app/app_users/alumni/model.dart';
 import '../Onboarding/onboarding_screen.dart';
 import '../app_users/admin/admin_home.dart';
 import '../app_users/alumni/alumni_home.dart';
 import '../app_users/students/home/students_home.dart';
 import '../app_users/teacher/teacher_home.dart';
-import 'login_page.dart';
+import '../auth/login_page.dart';
 import 'package:upskill_app/auth/roles.dart';
 
 class AuthGate extends StatelessWidget {

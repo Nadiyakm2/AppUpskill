@@ -67,7 +67,7 @@ class AppRoutes {
   static const String auth = '/auth';
   static const String studentHome = '/StudentsHome';
   static const String teacherHome = '/TeacherHome';
-  static const String alumniHome = '/AluminiHome';
+  static const String alumniHome = '/AlumniHome';
   static const String adminHome = '/AdminHome';
   static const String onboarding = '/onboarding';
 
